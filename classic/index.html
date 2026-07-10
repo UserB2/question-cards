@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>질문 나눔 카드</title>
+  <meta name="description" content="모임에서 서로를 알아가는 질문 카드 뽑기" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>" />
+</head>
+<body>
+
+<!-- ═══════════ 화면 A: 설정 ═══════════ -->
+<section id="setup-screen">
+  <header class="setup-header">
+    <h1>🃏 질문 나눔 카드</h1>
+    <p class="tagline">카드를 뽑아 서로를 알아가는 시간</p>
+  </header>
+
+  <div class="setup-body">
+    <fieldset class="filter-group">
+      <legend>테마</legend>
+      <div id="theme-chips" class="chips"></div>
+    </fieldset>
+
+    <fieldset class="filter-group">
+      <legend>질문 유형</legend>
+      <div id="type-chips" class="chips"></div>
+    </fieldset>
+
+    <fieldset class="filter-group">
+      <legend>깊이</legend>
+      <div id="depth-chips" class="chips depth-chips"></div>
+    </fieldset>
+
+    <div class="setup-options">
+      <label class="toggle-row">
+        <input type="checkbox" id="exclude-toggle" checked />
+        <span>뽑은 카드 제외 <small>(뽑은 카드는 다시 나오지 않아요 — 다음 모임에도 기억됩니다)</small></span>
+      </label>
+      <button id="reset-drawn" type="button" class="ghost-btn">🔄 처음부터 다시 (뽑은 기록 초기화)</button>
+    </div>
+
+    <div class="setup-footer">
+      <p id="pool-count" class="pool-count"></p>
+      <button id="start-btn" type="button" class="primary-btn">시작하기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 화면 B: 덱 ═══════════ -->
+<section id="deck-screen" hidden>
+  <header class="deck-topbar">
+    <button id="to-setup" type="button" class="icon-btn" title="설정으로">⚙️</button>
+    <h2 class="deck-title">질문 나눔 카드</h2>
+    <span id="remaining-badge" class="badge" title="남은 카드"></span>
+  </header>
+
+  <main class="deck-main">
+    <div class="table-area">
+      <div id="card-stage">
+        <div id="card" hidden>
+          <div class="card-face card-back-face">
+            <div class="card-back-pattern"></div>
+            <span class="card-back-theme"></span>
+            <small class="card-back-hint">카드를 탭해서 뒤집기</small>
+          </div>
+          <div class="card-face card-front">
+            <div class="card-labels">
+              <span class="label-type"></span>
+              <span class="label-depth"></span>
+            </div>
+            <p class="card-question"></p>
+            <span class="card-theme-name"></span>
+          </div>
+        </div>
+
+        <div id="empty-state" hidden>
+          <p class="empty-emoji">🎉</p>
+          <p>카드를 다 뽑았어요!</p>
+          <div class="empty-actions">
+            <button id="empty-reset" type="button" class="primary-btn">처음부터 다시</button>
+            <button id="empty-setup" type="button" class="ghost-btn">조건 바꾸기</button>
+          </div>
+        </div>
+
+        <p id="stage-hint" class="stage-hint">아래 카드 더미를 탭해서 카드를 뽑아 보세요 👇</p>
+      </div>
+
+      <button id="next-card" type="button" class="ghost-btn" hidden>다음 카드 ↑</button>
+
+      <div id="deck-pile" title="카드 뽑기">
+        <div class="pile-card"></div>
+        <div class="pile-card"></div>
+        <div class="pile-card"></div>
+        <div class="pile-card"></div>
+        <div class="pile-card"></div>
+        <div class="pile-card"></div>
+        <div class="pile-card pile-top"></div>
+      </div>
+    </div>
+
+    <aside class="rollcall-panel">
+      <details id="rollcall-details" open>
+        <summary>👥 롤콜 — 누가 답할까요?</summary>
+        <div class="rollcall-body">
+          <p class="rollcall-hint">참석자를 등록하면 스핀으로 답할 사람을 뽑아 드려요. (선택 기능)</p>
+          <div class="attendee-form">
+            <input id="attendee-name" type="text" placeholder="참석자 이름" maxlength="12" autocomplete="off" />
+            <button id="add-attendee" type="button" class="primary-btn small">추가</button>
+          </div>
+          <ul id="attendee-list"></ul>
+          <label class="toggle-row small">
+            <input type="checkbox" id="fair-toggle" checked />
+            <span>공정 모드 <small>(전원이 한 번씩 걸릴 때까지 중복 없음)</small></span>
+          </label>
+
+          <div id="spinner-wrap" hidden>
+            <div class="spinner-pointer">▼</div>
+            <div id="spinner-circle"></div>
+            <div id="winner-label"></div>
+            <button id="spin-btn" type="button" class="primary-btn">🎯 스핀!</button>
+          </div>
+        </div>
+      </details>
+    </aside>
+  </main>
+</section>
+
+<script type="module" src="app.js"></script>
+<script type="module" src="spinner.js"></script>
+</body>
+</html>

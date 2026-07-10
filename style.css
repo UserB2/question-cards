@@ -25,6 +25,8 @@ body {
 }
 button { font: inherit; cursor: pointer; border: none; background: none; }
 h1, h2 { font-weight: 800; }
+/* display:flex 같은 저자 스타일이 hidden 속성을 이기지 못하게 */
+[hidden] { display: none !important; }
 
 /* ═══════════ 앱 골격: 사이드바 + 콘텐츠 ═══════════ */
 .app { display: flex; min-height: 100dvh; }
@@ -67,7 +69,7 @@ h1, h2 { font-weight: 800; }
 .hint-text { color: var(--muted); font-size: .92rem; }
 
 .view-empty {
-  min-height: 70dvh; display: flex; flex-direction: column;
+  display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 14px; text-align: center;
 }
 
@@ -173,19 +175,19 @@ h1, h2 { font-weight: 800; }
 .card-actions { display: flex; gap: 10px; margin-top: 16px; min-height: 2.6em; }
 
 /* ── 카드 더미 (부채꼴) ── */
-#deck-pile { position: relative; width: 190px; height: 120px; cursor: pointer; margin-top: 14px; flex-shrink: 0; }
+#deck-pile { position: relative; width: 330px; height: 205px; cursor: pointer; margin-top: 18px; flex-shrink: 0; }
 .pile-card {
   position: absolute; left: 50%; bottom: 0;
-  width: 84px; height: 118px; border-radius: 10px;
+  width: 132px; height: 186px; border-radius: 14px;
   background: linear-gradient(145deg, #3b5bdb, #2a3f9e);
-  border: 3px solid var(--panel);
-  box-shadow: 0 4px 14px rgba(20,20,60,.3);
+  border: 4px solid var(--panel);
+  box-shadow: 0 6px 18px rgba(20,20,60,.3);
   transform-origin: 50% 130%;
 }
 .pile-card::after {
-  content: ""; position: absolute; inset: 5px; border-radius: 6px;
-  border: 1.5px solid rgba(255,255,255,.4);
-  background: repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,255,255,.09) 8px 16px);
+  content: ""; position: absolute; inset: 8px; border-radius: 9px;
+  border: 2px solid rgba(255,255,255,.4);
+  background: repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,.09) 12px 24px);
 }
 .pile-card:nth-child(1) { transform: translateX(-50%) rotate(-24deg); }
 .pile-card:nth-child(2) { transform: translateX(-50%) rotate(-16deg); }
@@ -194,15 +196,18 @@ h1, h2 { font-weight: 800; }
 .pile-card:nth-child(5) { transform: translateX(-50%) rotate(8deg); }
 .pile-card:nth-child(6) { transform: translateX(-50%) rotate(16deg); }
 .pile-card:nth-child(7) { transform: translateX(-50%) rotate(24deg); }
-#deck-pile:hover .pile-top { transform: translateX(-50%) rotate(24deg) translateY(-10px); transition: transform .2s; }
+#deck-pile:hover .pile-top { transform: translateX(-50%) rotate(24deg) translateY(-14px); transition: transform .2s; }
 #deck-pile.disabled { opacity: .35; cursor: not-allowed; }
 
 /* ═══════════ 뷰 2: 룰렛 ═══════════ */
-.view-roulette { display: flex; align-items: center; justify-content: center; }
+.view-roulette { display: flex; flex-direction: column; align-items: center; }
+.roulette-center {
+  flex: 1; width: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
 #spinner-wrap {
   display: flex; flex-direction: column; align-items: center; gap: 16px;
 }
-#spinner-wrap[hidden] { display: none; }
 .spinner-pointer { font-size: 1.6rem; color: var(--ink); line-height: 1; }
 #spinner-circle {
   position: relative; width: 300px; height: 300px; border-radius: 50%;
@@ -284,5 +289,7 @@ body.spinning #go-cards { opacity: .15; pointer-events: none; }
   .panel { padding: 20px 18px; }
   :root { --card-w: min(300px, 84vw); }
   #card-stage { margin-top: 8px; }
+  #deck-pile { width: 280px; height: 175px; }
+  .pile-card { width: 112px; height: 158px; }
   #spinner-circle { width: min(300px, 82vw); height: min(300px, 82vw); }
 }

@@ -87,18 +87,24 @@
 
     <!-- ═══════════ 뷰 2: 룰렛 (룰렛에만 집중) ═══════════ -->
     <section class="view view-roulette" data-view="roulette" hidden>
-      <div id="roulette-empty" class="view-empty" hidden>
-        <p class="empty-emoji">👥</p>
-        <p>참석자를 먼저 등록해 주세요</p>
-        <button id="go-people" type="button" class="primary-btn">참석자 등록하기</button>
-      </div>
+      <header class="view-top">
+        <button id="manage-people" type="button" class="pill-btn">👥 참석자 등록하기</button>
+      </header>
 
-      <div id="spinner-wrap" hidden>
-        <div id="winner-label"></div>
-        <div class="spinner-pointer">▼</div>
-        <div id="spinner-circle"></div>
-        <button id="spin-btn" type="button" class="primary-btn big">🎯 스핀!</button>
-        <button id="go-cards" type="button" class="ghost-btn">🃏 카드 뽑으러 가기</button>
+      <div class="roulette-center">
+        <div id="roulette-empty" class="view-empty" hidden>
+          <p class="empty-emoji">👥</p>
+          <p>참석자를 먼저 등록해 주세요</p>
+          <button id="go-people" type="button" class="primary-btn">참석자 등록하기</button>
+        </div>
+
+        <div id="spinner-wrap" hidden>
+          <div id="winner-label"></div>
+          <div class="spinner-pointer">▼</div>
+          <div id="spinner-circle"></div>
+          <button id="spin-btn" type="button" class="primary-btn big">🎯 스핀!</button>
+          <button id="go-cards" type="button" class="ghost-btn">🃏 카드 뽑으러 가기</button>
+        </div>
       </div>
     </section>
 

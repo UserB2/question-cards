@@ -156,6 +156,7 @@ $("#add-attendee").addEventListener("click", addAttendee);
 nameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") addAttendee(); });
 spinBtn.addEventListener("click", spin);
 $("#go-people").addEventListener("click", () => showView("people"));
+$("#manage-people").addEventListener("click", () => showView("people"));
 $("#go-cards").addEventListener("click", () => showView("cards"));
 $("#people-to-roulette").addEventListener("click", () => showView("roulette"));
 document.addEventListener("card-revealed", () => { if (!spinning) winnerEl.textContent = ""; });

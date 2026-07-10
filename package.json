@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test/ && node test/validate-questions.cjs"
+    "test": "node --test test/logic.test.js && node test/validate-questions.cjs"
   }
 }

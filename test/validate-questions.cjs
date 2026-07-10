@@ -1,0 +1,30 @@
+const assert = require("node:assert");
+const fs = require("node:fs");
+const qs = JSON.parse(fs.readFileSync(__dirname + "/../questions.json", "utf8"));
+const THEMES = ["어색함 안녕","웃음 주의보","취향 저격","추억 소환","요즘 나는","내일의 나","마음 속 깊이","우리 사이","믿음 이야기"];
+const TYPES = ["일반 질문","밸런스 게임","만약에..?","빈칸 채우기","미션"];
+const SOURCES = ["KM","질문들","Range","창작"];
+assert.ok(qs.length >= 200, `200문항 이상이어야 함 (현재 ${qs.length})`);
+const ids = new Set();
+for (const q of qs) {
+  assert.ok(Number.isInteger(q.id) && !ids.has(q.id), `id 중복/비정수: ${q.id}`);
+  ids.add(q.id);
+  assert.ok(typeof q.text === "string" && q.text.trim().length >= 5, `text 이상: ${q.id}`);
+  assert.ok(THEMES.includes(q.theme), `theme 이상: ${q.id} ${q.theme}`);
+  assert.ok(TYPES.includes(q.type), `type 이상: ${q.id} ${q.type}`);
+  assert.ok([1, 2, 3].includes(q.depth), `depth 이상: ${q.id}`);
+  assert.ok(SOURCES.includes(q.source), `source 이상: ${q.id}`);
+}
+const km = qs.filter((q) => q.source === "KM").length;
+assert.ok(km >= 45, `KM 원문 45개 이상이어야 함 (현재 ${km})`);
+for (const t of THEMES) assert.ok(qs.some((q) => q.theme === t), `테마 비어 있음: ${t}`);
+for (const t of TYPES) assert.ok(qs.some((q) => q.type === t), `유형 비어 있음: ${t}`);
+for (const d of [1, 2, 3]) assert.ok(qs.filter((q) => q.depth === d).length >= 30, `깊이 ${d} 30개 미만`);
+const byTheme = {};
+for (const q of qs) byTheme[q.theme] = (byTheme[q.theme] || 0) + 1;
+console.log(`OK: ${qs.length}문항, KM ${km}`);
+console.log("테마별:", JSON.stringify(byTheme));
+const byType = {};
+for (const q of qs) byType[q.type] = (byType[q.type] || 0) + 1;
+console.log("유형별:", JSON.stringify(byType));
+console.log("깊이별:", JSON.stringify({1: qs.filter(q=>q.depth===1).length, 2: qs.filter(q=>q.depth===2).length, 3: qs.filter(q=>q.depth===3).length}));

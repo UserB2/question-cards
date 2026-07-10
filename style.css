@@ -143,7 +143,13 @@ h1, h2 { font-weight: 800; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 26px;
 }
+/* 모바일 크롬 backface 버그 보강 1: z-index 등으로 레이어 승격된 자식도 뒷면에서 숨김 */
+.card-face * { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+/* 보강 2: 회전이 절반(90°) 지난 뒤에는 반대편 면을 visibility로 아예 숨김 */
+#card.flipped .card-back-face { visibility: hidden; transition: visibility 0s .3s; }
+#card:not(.flipped) .card-front { visibility: hidden; transition: visibility 0s .3s; }
 .card-back-face {
+  transform: rotateY(0deg); /* 명시적 3D 변환 — 일부 브라우저의 backface 계산 버그 회피 */
   background: linear-gradient(145deg, var(--theme-color, #4A90D9), color-mix(in srgb, var(--theme-color, #4A90D9) 65%, #1a1a2e));
   color: #fff; gap: 14px; overflow: hidden;
 }

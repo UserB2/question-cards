@@ -3,6 +3,8 @@
 모임에서 서로를 알아가는 대화를 돕는 질문 카드 뽑기 웹사이트.
 한 화면(폰/노트북)을 같이 보며 카드를 뽑고, 뒤집어 질문을 확인하고, 스피너로 답할 사람을 뽑습니다.
 
+**▶ 바로 사용: https://userb2.github.io/question-cards/** (이전 UI: [classic](https://userb2.github.io/question-cards/classic/))
+
 ## 기능
 
 - **테마 9종 × 유형 5종 × 깊이 3단계** 필터 (모두 다중 선택, AND 결합)

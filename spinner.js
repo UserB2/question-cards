@@ -1,4 +1,5 @@
 import { pickAttendee } from "./logic.js";
+import { showView } from "./app.js";
 
 /* ── localStorage ── */
 const store = {
@@ -14,13 +15,12 @@ let spun = store.get("qcard-spun", []);
 let circleAngle = 0; // 누적 회전 각도
 let spinning = false;
 
-const RADIUS = 88; // px — 210px 원 - 34px 아바타에 맞춤
-
 const $ = (sel) => document.querySelector(sel);
 const listEl = $("#attendee-list");
 const nameInput = $("#attendee-name");
 const circleEl = $("#spinner-circle");
 const wrapEl = $("#spinner-wrap");
+const emptyEl = $("#roulette-empty");
 const winnerEl = $("#winner-label");
 const spinBtn = $("#spin-btn");
 const fairToggle = $("#fair-toggle");
@@ -41,7 +41,7 @@ function makeAvatar(name) {
   return div;
 }
 
-/* ── 롤콜 목록 ── */
+/* ── 롤콜 목록 (참석자 뷰) ── */
 function renderRollCall() {
   listEl.replaceChildren(...attendees.map((name) => {
     const li = document.createElement("li");
@@ -58,23 +58,31 @@ function renderRollCall() {
     li.append(rm);
     return li;
   }));
+  emptyEl.hidden = attendees.length > 0;
   wrapEl.hidden = attendees.length === 0;
   renderCircle();
 }
 
 /* ── 원형 배치: rotate(θ+A) translateY(-R) rotate(-(θ+A)) → 글자는 항상 수직 ── */
-function avatarTransform(baseAngle, angle) {
+function radius() {
+  // 원이 숨겨져 있으면 clientWidth가 0 → 기본 크기 300px 가정
+  const w = circleEl.clientWidth || 300;
+  return w / 2 - 28; // 아바타 반지름(22) + 여백(6)
+}
+
+function avatarTransform(baseAngle, angle, r) {
   const total = baseAngle + angle;
-  return `rotate(${total}deg) translateY(-${RADIUS}px) rotate(${-total}deg)`;
+  return `rotate(${total}deg) translateY(-${r}px) rotate(${-total}deg)`;
 }
 
 function renderCircle() {
+  const r = radius();
   circleEl.replaceChildren(...attendees.map((name, i) => {
     const holder = document.createElement("div");
     holder.className = "spin-avatar";
     holder.dataset.base = (360 * i) / attendees.length;
     holder.style.transition = "none"; // 배치 시에는 애니메이션 없이
-    holder.style.transform = avatarTransform(Number(holder.dataset.base), circleAngle);
+    holder.style.transform = avatarTransform(Number(holder.dataset.base), circleAngle, r);
     holder.append(makeAvatar(name));
     return holder;
   }));
@@ -104,7 +112,7 @@ function removeAttendee(name) {
   renderRollCall();
 }
 
-/* ── 스핀 ── */
+/* ── 스핀 (집중 모드: body.spinning으로 룰렛 외 요소 흐리게) ── */
 function spin() {
   if (spinning || attendees.length === 0) return;
   const { winner, newSpunIds } = pickAttendee(attendees, spun, fairToggle.checked);
@@ -125,17 +133,20 @@ function spin() {
 
   spinning = true;
   spinBtn.disabled = true;
+  document.body.classList.add("spinning");
   winnerEl.textContent = "두구두구두구...";
 
+  const r = radius();
   const holders = circleEl.querySelectorAll(".spin-avatar");
   holders.forEach((h) => {
     h.style.transition = ""; // style.css의 3.2s cubic-bezier 사용
-    h.style.transform = avatarTransform(Number(h.dataset.base), circleAngle);
+    h.style.transform = avatarTransform(Number(h.dataset.base), circleAngle, r);
   });
 
   setTimeout(() => {
     spinning = false;
     spinBtn.disabled = false;
+    document.body.classList.remove("spinning");
     winnerEl.textContent = `🌟 ${winner} 🌟`;
   }, 3300);
 }
@@ -144,6 +155,12 @@ function spin() {
 $("#add-attendee").addEventListener("click", addAttendee);
 nameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") addAttendee(); });
 spinBtn.addEventListener("click", spin);
+$("#go-people").addEventListener("click", () => showView("people"));
+$("#go-cards").addEventListener("click", () => showView("cards"));
+$("#people-to-roulette").addEventListener("click", () => showView("roulette"));
 document.addEventListener("card-revealed", () => { if (!spinning) winnerEl.textContent = ""; });
+// 룰렛 뷰가 열릴 때(원 크기 측정 가능 시점) 다시 배치
+document.addEventListener("view-changed", (e) => { if (e.detail === "roulette") renderCircle(); });
+window.addEventListener("resize", () => { if (!spinning) renderCircle(); });
 
 renderRollCall();

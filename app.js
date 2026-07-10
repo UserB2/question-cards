@@ -21,13 +21,22 @@ let currentCard = null; // null | 질문 객체
 
 /* ── DOM ── */
 const $ = (sel) => document.querySelector(sel);
-const setupScreen = $("#setup-screen");
-const deckScreen = $("#deck-screen");
 const card = $("#card");
 const deckPile = $("#deck-pile");
 const emptyState = $("#empty-state");
 const stageHint = $("#stage-hint");
 const nextCardBtn = $("#next-card");
+const goRouletteBtn = $("#go-roulette");
+
+/* ── 뷰 라우터: 한 번에 한 뷰만 (집중 모드) ── */
+export function showView(name) {
+  document.querySelectorAll(".view").forEach((v) => { v.hidden = v.dataset.view !== name; });
+  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.view === name));
+  document.dispatchEvent(new CustomEvent("view-changed", { detail: name }));
+}
+document.querySelectorAll(".nav-btn").forEach((b) =>
+  b.addEventListener("click", () => showView(b.dataset.view))
+);
 
 /* ── 칩 렌더링 ── */
 function makeChip(label, isOn, color, onToggle, subLabel) {
@@ -69,7 +78,7 @@ function renderChips() {
 
 function saveFilters() { store.set("qcard-filters", filters); }
 
-/* ── 카운트 ── */
+/* ── 카운트 + 필터 요약 ── */
 function pool() { return availableQuestions(questions, filters, drawn, filters.excludeDrawn); }
 
 function updateCount() {
@@ -82,14 +91,11 @@ function updateCount() {
     countEl.innerHTML = `지금 조건으로 <strong>${n}장</strong> 뽑을 수 있어요`;
     countEl.classList.remove("zero");
   }
-  $("#start-btn").disabled = n === 0;
   $("#remaining-badge").textContent = `${n}장`;
+  $("#filter-summary").textContent =
+    `테마 ${filters.themes.length}/${THEMES.length} · 유형 ${filters.types.length}/${TYPES.length} · 깊이 ${filters.depths.length}/3`;
   deckPile.classList.toggle("disabled", n === 0 && !currentCard);
 }
-
-/* ── 화면 전환 ── */
-function showDeck() { setupScreen.hidden = true; deckScreen.hidden = false; updateCount(); }
-function showSetup() { deckScreen.hidden = true; setupScreen.hidden = false; updateCount(); }
 
 /* ── 뽑기 / 플립 / 버리기 ── */
 function drawCard() {
@@ -113,6 +119,7 @@ function drawCard() {
   stageHint.hidden = true;
   emptyState.hidden = true;
   nextCardBtn.hidden = false;
+  goRouletteBtn.hidden = true; // 뒤집기 전에는 룰렛 버튼 숨김
 
   if (filters.excludeDrawn) {
     if (!drawn.includes(q.id)) drawn.push(q.id);
@@ -124,6 +131,7 @@ function drawCard() {
 function flipCard() {
   if (!currentCard || card.classList.contains("flipped")) return;
   card.classList.add("flipped");
+  goRouletteBtn.hidden = false;
   document.dispatchEvent(new CustomEvent("card-revealed"));
 }
 
@@ -131,6 +139,7 @@ function discardCard(direction = "fly-up") {
   if (!currentCard) return;
   card.classList.add(direction);
   nextCardBtn.hidden = true;
+  goRouletteBtn.hidden = true;
   setTimeout(() => {
     card.hidden = true;
     card.classList.remove(direction, "flipped");
@@ -156,11 +165,12 @@ card.addEventListener("pointerup", (e) => {
 card.addEventListener("click", () => { if (!swiped) flipCard(); });
 
 /* ── 이벤트 배선 ── */
-$("#start-btn").addEventListener("click", showDeck);
-$("#to-setup").addEventListener("click", showSetup);
-$("#empty-setup").addEventListener("click", showSetup);
 deckPile.addEventListener("click", drawCard);
 nextCardBtn.addEventListener("click", () => discardCard("fly-up"));
+goRouletteBtn.addEventListener("click", () => showView("roulette"));
+$("#filter-summary").addEventListener("click", () => showView("settings"));
+$("#empty-setup").addEventListener("click", () => showView("settings"));
+$("#settings-to-cards").addEventListener("click", () => showView("cards"));
 $("#exclude-toggle").addEventListener("change", (e) => {
   filters.excludeDrawn = e.target.checked;
   saveFilters();
@@ -182,5 +192,5 @@ fetch("./questions.json")
   .then((data) => { questions = data; renderChips(); updateCount(); })
   .catch(() => {
     $("#pool-count").textContent = "questions.json을 불러오지 못했어요. 로컬에서는 python -m http.server로 실행해 주세요.";
-    $("#start-btn").disabled = true;
+    $("#filter-summary").textContent = "로딩 오류";
   });

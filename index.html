@@ -10,54 +10,36 @@
 </head>
 <body>
 
-<!-- ═══════════ 화면 A: 설정 ═══════════ -->
-<section id="setup-screen">
-  <header class="setup-header">
-    <h1>🃏 질문 나눔 카드</h1>
-    <p class="tagline">카드를 뽑아 서로를 알아가는 시간</p>
-  </header>
-
-  <div class="setup-body">
-    <fieldset class="filter-group">
-      <legend>테마</legend>
-      <div id="theme-chips" class="chips"></div>
-    </fieldset>
-
-    <fieldset class="filter-group">
-      <legend>질문 유형</legend>
-      <div id="type-chips" class="chips"></div>
-    </fieldset>
-
-    <fieldset class="filter-group">
-      <legend>깊이</legend>
-      <div id="depth-chips" class="chips depth-chips"></div>
-    </fieldset>
-
-    <div class="setup-options">
-      <label class="toggle-row">
-        <input type="checkbox" id="exclude-toggle" checked />
-        <span>뽑은 카드 제외 <small>(뽑은 카드는 다시 나오지 않아요 — 다음 모임에도 기억됩니다)</small></span>
-      </label>
-      <button id="reset-drawn" type="button" class="ghost-btn">🔄 처음부터 다시 (뽑은 기록 초기화)</button>
+<div class="app">
+  <!-- ═══════════ 사이드바 ═══════════ -->
+  <nav id="sidebar" aria-label="메뉴">
+    <div class="brand" title="질문 나눔 카드">
+      <span class="brand-emoji">🃏</span>
+      <span class="brand-name">질문 나눔<br />카드</span>
     </div>
+    <button type="button" class="nav-btn active" data-view="cards">
+      <span class="nav-icon">🃏</span><span class="nav-label">카드</span>
+    </button>
+    <button type="button" class="nav-btn" data-view="roulette">
+      <span class="nav-icon">🎯</span><span class="nav-label">룰렛</span>
+    </button>
+    <button type="button" class="nav-btn" data-view="people">
+      <span class="nav-icon">👥</span><span class="nav-label">참석자</span>
+    </button>
+    <button type="button" class="nav-btn" data-view="settings">
+      <span class="nav-icon">⚙️</span><span class="nav-label">설정</span>
+    </button>
+  </nav>
 
-    <div class="setup-footer">
-      <p id="pool-count" class="pool-count"></p>
-      <button id="start-btn" type="button" class="primary-btn">시작하기</button>
-    </div>
-  </div>
-</section>
+  <main id="content">
 
-<!-- ═══════════ 화면 B: 덱 ═══════════ -->
-<section id="deck-screen" hidden>
-  <header class="deck-topbar">
-    <button id="to-setup" type="button" class="icon-btn" title="설정으로">⚙️</button>
-    <h2 class="deck-title">질문 나눔 카드</h2>
-    <span id="remaining-badge" class="badge" title="남은 카드"></span>
-  </header>
+    <!-- ═══════════ 뷰 1: 카드 뽑기 (카드에만 집중) ═══════════ -->
+    <section class="view view-cards" data-view="cards">
+      <header class="view-top">
+        <button id="filter-summary" type="button" class="pill-btn" title="필터 바꾸기"></button>
+        <span id="remaining-badge" class="badge" title="남은 카드"></span>
+      </header>
 
-  <main class="deck-main">
-    <div class="table-area">
       <div id="card-stage">
         <div id="card" hidden>
           <div class="card-face card-back-face">
@@ -87,7 +69,10 @@
         <p id="stage-hint" class="stage-hint">아래 카드 더미를 탭해서 카드를 뽑아 보세요 👇</p>
       </div>
 
-      <button id="next-card" type="button" class="ghost-btn" hidden>다음 카드 ↑</button>
+      <div class="card-actions">
+        <button id="go-roulette" type="button" class="ghost-btn" hidden>🎯 누가 답할까?</button>
+        <button id="next-card" type="button" class="ghost-btn" hidden>다음 카드 ↑</button>
+      </div>
 
       <div id="deck-pile" title="카드 뽑기">
         <div class="pile-card"></div>
@@ -98,34 +83,81 @@
         <div class="pile-card"></div>
         <div class="pile-card pile-top"></div>
       </div>
-    </div>
+    </section>
 
-    <aside class="rollcall-panel">
-      <details id="rollcall-details" open>
-        <summary>👥 롤콜 — 누가 답할까요?</summary>
-        <div class="rollcall-body">
-          <p class="rollcall-hint">참석자를 등록하면 스핀으로 답할 사람을 뽑아 드려요. (선택 기능)</p>
-          <div class="attendee-form">
-            <input id="attendee-name" type="text" placeholder="참석자 이름" maxlength="12" autocomplete="off" />
-            <button id="add-attendee" type="button" class="primary-btn small">추가</button>
-          </div>
-          <ul id="attendee-list"></ul>
-          <label class="toggle-row small">
-            <input type="checkbox" id="fair-toggle" checked />
-            <span>공정 모드 <small>(전원이 한 번씩 걸릴 때까지 중복 없음)</small></span>
-          </label>
+    <!-- ═══════════ 뷰 2: 룰렛 (룰렛에만 집중) ═══════════ -->
+    <section class="view view-roulette" data-view="roulette" hidden>
+      <div id="roulette-empty" class="view-empty" hidden>
+        <p class="empty-emoji">👥</p>
+        <p>참석자를 먼저 등록해 주세요</p>
+        <button id="go-people" type="button" class="primary-btn">참석자 등록하기</button>
+      </div>
 
-          <div id="spinner-wrap" hidden>
-            <div class="spinner-pointer">▼</div>
-            <div id="spinner-circle"></div>
-            <div id="winner-label"></div>
-            <button id="spin-btn" type="button" class="primary-btn">🎯 스핀!</button>
-          </div>
+      <div id="spinner-wrap" hidden>
+        <div id="winner-label"></div>
+        <div class="spinner-pointer">▼</div>
+        <div id="spinner-circle"></div>
+        <button id="spin-btn" type="button" class="primary-btn big">🎯 스핀!</button>
+        <button id="go-cards" type="button" class="ghost-btn">🃏 카드 뽑으러 가기</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 뷰 3: 참석자 ═══════════ -->
+    <section class="view view-people" data-view="people" hidden>
+      <div class="panel">
+        <h2>👥 참석자</h2>
+        <p class="hint-text">참석자를 등록하면 룰렛으로 답할 사람을 뽑아 드려요.</p>
+        <div class="attendee-form">
+          <input id="attendee-name" type="text" placeholder="참석자 이름" maxlength="12" autocomplete="off" />
+          <button id="add-attendee" type="button" class="primary-btn small">추가</button>
         </div>
-      </details>
-    </aside>
+        <ul id="attendee-list"></ul>
+        <label class="toggle-row small">
+          <input type="checkbox" id="fair-toggle" checked />
+          <span>공정 모드 <small>(전원이 한 번씩 걸릴 때까지 중복 없음)</small></span>
+        </label>
+        <button id="people-to-roulette" type="button" class="primary-btn">🎯 룰렛 돌리러 가기</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ 뷰 4: 설정 (필터) ═══════════ -->
+    <section class="view view-settings" data-view="settings" hidden>
+      <div class="panel">
+        <h2>⚙️ 설정</h2>
+
+        <fieldset class="filter-group">
+          <legend>테마</legend>
+          <div id="theme-chips" class="chips"></div>
+        </fieldset>
+
+        <fieldset class="filter-group">
+          <legend>질문 유형</legend>
+          <div id="type-chips" class="chips"></div>
+        </fieldset>
+
+        <fieldset class="filter-group">
+          <legend>깊이</legend>
+          <div id="depth-chips" class="chips depth-chips"></div>
+        </fieldset>
+
+        <p id="pool-count" class="pool-count"></p>
+
+        <div class="setup-options">
+          <label class="toggle-row">
+            <input type="checkbox" id="exclude-toggle" checked />
+            <span>뽑은 카드 제외 <small>(뽑은 카드는 다시 나오지 않아요 — 다음 모임에도 기억됩니다)</small></span>
+          </label>
+          <button id="reset-drawn" type="button" class="ghost-btn">🔄 처음부터 다시 (뽑은 기록 초기화)</button>
+        </div>
+
+        <button id="settings-to-cards" type="button" class="primary-btn">🃏 카드 뽑으러 가기</button>
+
+        <p class="classic-link"><a href="classic/">이전 버전(클래식 UI) 열기 →</a></p>
+      </div>
+    </section>
+
   </main>
-</section>
+</div>
 
 <script type="module" src="app.js"></script>
 <script type="module" src="spinner.js"></script>

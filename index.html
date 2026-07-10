@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>질문 나눔 카드</title>
   <meta name="description" content="모임에서 서로를 알아가는 질문 카드 뽑기" />
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=4" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>" />
 </head>
 <body>
@@ -19,6 +19,9 @@
     </div>
     <button type="button" class="nav-btn active" data-view="cards">
       <span class="nav-icon">🃏</span><span class="nav-label">카드</span>
+    </button>
+    <button type="button" class="nav-btn" data-view="browse">
+      <span class="nav-icon">📖</span><span class="nav-label">목록</span>
     </button>
     <button type="button" class="nav-btn" data-view="roulette">
       <span class="nav-icon">🎯</span><span class="nav-label">룰렛</span>
@@ -82,6 +85,18 @@
         <div class="pile-card"></div>
         <div class="pile-card"></div>
         <div class="pile-card pile-top"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 뷰 5: 질문 목록 (테마별 훑어보기) ═══════════ -->
+    <section class="view view-browse" data-view="browse" hidden>
+      <div class="panel browse-panel">
+        <h2>📖 질문 목록</h2>
+        <p class="hint-text">테마를 고르면 그 테마의 전체 질문을 훑어볼 수 있어요. 흐린 항목은 이미 뽑은 질문이에요.</p>
+        <div class="browse-controls">
+          <select id="browse-theme" aria-label="테마 선택"></select>
+        </div>
+        <div id="browse-list"></div>
       </div>
     </section>
 

@@ -275,6 +275,40 @@ body.spinning #go-cards { opacity: .15; pointer-events: none; }
 .classic-link { font-size: .85rem; }
 .classic-link a { color: var(--muted); }
 
+/* ═══════════ 뷰 5: 질문 목록 ═══════════ */
+.browse-panel { max-width: 720px; }
+.browse-controls {
+  position: sticky; top: 10px; z-index: 5; /* 스크롤 중에도 테마를 바꿀 수 있게 */
+}
+#browse-theme {
+  width: 100%; font: inherit; font-weight: 600; color: var(--ink);
+  border: 1.5px solid #d9d4c8; border-radius: 10px;
+  padding: .6em .9em; background: #fff; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(30, 30, 60, .08);
+}
+#browse-theme:focus { outline: 2px solid var(--accent); border-color: transparent; }
+#browse-list { display: flex; flex-direction: column; gap: 8px; }
+.browse-depth { font-size: 1rem; font-weight: 800; margin: 14px 0 2px; }
+.browse-depth:first-child { margin-top: 0; }
+.browse-item {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  background: #fff; border: 1px solid var(--line);
+  border-left: 4px solid var(--theme-color, var(--line));
+}
+.browse-item p { font-size: .95rem; line-height: 1.5; word-break: keep-all; }
+.browse-item.drawn { opacity: .5; }
+.browse-item.drawn p::after { content: " ✓"; color: var(--accent); font-weight: 800; }
+.browse-meta { display: flex; gap: 6px; flex-shrink: 0; }
+.browse-theme-tag, .browse-type {
+  font-size: .72rem; font-weight: 700; border-radius: 999px; padding: .25em .7em; white-space: nowrap;
+}
+.browse-theme-tag {
+  background: color-mix(in srgb, var(--theme-color, #888) 14%, #fff);
+  color: color-mix(in srgb, var(--theme-color, #888) 80%, #000);
+}
+.browse-type { background: rgba(0, 0, 0, .06); color: var(--muted); }
+
 /* ═══════════ 모바일: 사이드바 → 하단 탭바 ═══════════ */
 @media (max-width: 760px) {
   .app { flex-direction: column; }
@@ -298,4 +332,5 @@ body.spinning #go-cards { opacity: .15; pointer-events: none; }
   #deck-pile { width: 280px; height: 175px; }
   .pile-card { width: 112px; height: 158px; }
   #spinner-circle { width: min(300px, 82vw); height: min(300px, 82vw); }
+  .browse-item { flex-direction: column; align-items: flex-start; gap: 6px; }
 }

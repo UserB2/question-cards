@@ -164,6 +164,67 @@ card.addEventListener("pointerup", (e) => {
 });
 card.addEventListener("click", () => { if (!swiped) flipCard(); });
 
+/* ── 질문 목록 (테마별 훑어보기) ── */
+const browseTheme = $("#browse-theme");
+const browseList = $("#browse-list");
+
+function renderBrowseOptions() {
+  browseTheme.replaceChildren(
+    new Option(`전체 테마 (${questions.length}문항)`, ""),
+    ...THEMES.map((t) => {
+      const n = questions.filter((q) => q.theme === t).length;
+      return new Option(`${t} (${n}문항)`, t);
+    })
+  );
+}
+
+function renderBrowseList() {
+  const theme = browseTheme.value;
+  const list = theme ? questions.filter((q) => q.theme === theme) : questions;
+  browseList.replaceChildren();
+  for (const d of [1, 2, 3]) {
+    const items = list.filter((q) => q.depth === d);
+    if (items.length === 0) continue;
+
+    const heading = document.createElement("h3");
+    heading.className = "browse-depth";
+    heading.textContent = `깊이 ${d} · ${DEPTH_LABELS[d]} — ${items.length}문항`;
+    browseList.append(heading);
+
+    for (const q of items) {
+      const row = document.createElement("div");
+      row.className = "browse-item" + (drawn.includes(q.id) ? " drawn" : "");
+      row.style.setProperty("--theme-color", THEME_COLORS[q.theme]);
+
+      const text = document.createElement("p");
+      text.textContent = q.text;
+
+      const meta = document.createElement("span");
+      meta.className = "browse-meta";
+      if (!theme) {
+        const tag = document.createElement("span");
+        tag.className = "browse-theme-tag";
+        tag.textContent = q.theme;
+        meta.append(tag);
+      }
+      if (q.type !== "일반 질문") {
+        const type = document.createElement("span");
+        type.className = "browse-type";
+        type.textContent = q.type;
+        meta.append(type);
+      }
+
+      row.append(text, meta);
+      browseList.append(row);
+    }
+  }
+}
+
+browseTheme.addEventListener("change", renderBrowseList);
+document.addEventListener("view-changed", (e) => {
+  if (e.detail === "browse") renderBrowseList(); // 뽑은 카드 표시를 최신 상태로
+});
+
 /* ── 이벤트 배선 ── */
 deckPile.addEventListener("click", drawCard);
 nextCardBtn.addEventListener("click", () => discardCard("fly-up"));
@@ -189,7 +250,7 @@ $("#empty-reset").addEventListener("click", resetDrawn);
 /* ── 초기화 ── */
 fetch("./questions.json")
   .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then((data) => { questions = data; renderChips(); updateCount(); })
+  .then((data) => { questions = data; renderChips(); updateCount(); renderBrowseOptions(); })
   .catch(() => {
     $("#pool-count").textContent = "questions.json을 불러오지 못했어요. 로컬에서는 python -m http.server로 실행해 주세요.";
     $("#filter-summary").textContent = "로딩 오류";

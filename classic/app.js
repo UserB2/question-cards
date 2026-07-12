@@ -1,5 +1,5 @@
 import {
-  THEMES, TYPES, DEPTH_LABELS, THEME_COLORS,
+  THEMES, TYPES, DEPTH_LABELS, THEME_COLORS, migrateThemes,
   availableQuestions, drawRandom,
 } from "../logic.js";
 
@@ -16,6 +16,7 @@ const store = {
 const DEFAULT_FILTERS = { themes: [...THEMES], types: [...TYPES], depths: [1, 2, 3], excludeDrawn: true };
 let questions = [];
 let filters = { ...DEFAULT_FILTERS, ...store.get("qcard-filters", {}) };
+filters.themes = migrateThemes(filters.themes);
 let drawn = store.get("qcard-drawn", []);
 let currentCard = null; // null | 질문 객체
 

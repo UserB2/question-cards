@@ -1,9 +1,9 @@
 const assert = require("node:assert");
 const fs = require("node:fs");
 const qs = JSON.parse(fs.readFileSync(__dirname + "/../questions.json", "utf8"));
-const THEMES = ["어색함 안녕","웃음 주의보","취향 저격","추억 소환","요즘 나는","내일의 나","마음 속 깊이","우리 사이","믿음 이야기"];
+const THEMES = ["어색함 안녕","의식의 흐름","취향 저격","추억 소환","요즘 나는","앞으로 미래에 대해","딮딮 가치관 이야기","공동체","믿음 이야기"];
 const TYPES = ["일반 질문","밸런스 게임","만약에..?","빈칸 채우기","미션"];
-const SOURCES = ["KM","질문들","Range","창작"];
+const SOURCES = ["KM","질문들","Range","창작","추가"];
 assert.ok(qs.length >= 200, `200문항 이상이어야 함 (현재 ${qs.length})`);
 const ids = new Set();
 for (const q of qs) {
